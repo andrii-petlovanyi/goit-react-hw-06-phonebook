@@ -1,47 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
 import { Box } from './Box';
 import { ContactForm } from './ContactsForm/ContactsForm';
 import { FilterContacts } from './Filter/Filter';
 import { ContactList } from './ContactsList/ContactsList';
 import { theme } from './Theme';
-
-const KEY_CONTACTS = 'contacts_database';
+import { getContacts } from 'redux/selectors';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    const contactsFromLS = JSON.parse(localStorage.getItem(KEY_CONTACTS));
-    return contactsFromLS ? contactsFromLS : [];
-  });
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem(KEY_CONTACTS, JSON.stringify(contacts));
-  }, [contacts]);
-
-  const addContact = contact => {
-    if (
-      contacts.find(
-        cont => cont.name.toLowerCase() === contact.name.toLowerCase()
-      )
-    ) {
-      return alert(`${contact.name} is already in contacts`);
-    }
-    setContacts(prevState => [...prevState, contact]);
-  };
-
-  const onDelete = id => {
-    setContacts(contacts.filter(c => c.id !== id));
-  };
-
-  const onChange = event => {
-    setFilter(event.currentTarget.value);
-  };
-
-  const onFilter = () => {
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  };
+  const contacts = useSelector(getContacts);
 
   return (
     <Box
@@ -64,7 +31,7 @@ export const App = () => {
       >
         PhoneBook
       </Box>
-      <ContactForm onSubmit={addContact} />
+      <ContactForm />
       <Box
         as="span"
         width={330}
@@ -84,10 +51,9 @@ export const App = () => {
       >
         {contacts.length > 0 ? 'Contacts' : 'No contacts'}
       </Box>
-      {contacts.length > 1 && (
-        <FilterContacts onChange={onChange} value={filter} />
-      )}
-      <ContactList contacts={onFilter()} onDelete={onDelete} />
+
+      {contacts.length > 0 && <FilterContacts />}
+      <ContactList />
     </Box>
   );
 };
