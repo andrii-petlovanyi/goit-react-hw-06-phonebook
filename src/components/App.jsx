@@ -52,7 +52,7 @@ export const App = () => {
         {contacts.length > 0 ? 'Contacts' : 'No contacts'}
       </Box>
 
-      {contacts.length > 1 && <FilterContacts />}
+      {contacts.length > 0 && <FilterContacts />}
       <ContactList />
     </Box>
   );
